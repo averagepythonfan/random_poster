@@ -1,7 +1,7 @@
 import os
 
 TOKEN: str = os.getenv("TOKEN")
-CHAT_ID = (int(os.getenv("CHAT_ID")))
+CHAT_ID = -(int(os.getenv("CHAT_ID")))
 ADMIN = int(os.getenv("ADMIN"))
 
 POSTGRES_USER = os.getenv("POSTGRES_USER")
