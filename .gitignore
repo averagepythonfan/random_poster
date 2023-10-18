@@ -4,3 +4,4 @@
 /src/db/__pycache__
 /src/handlers/__pycache__
 /src/tasks/__pycache__
+.env
