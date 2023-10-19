@@ -30,13 +30,13 @@ services:
       CHAT_ID: ${CHAT_ID}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_HOST: psql_server
+      DB_HOST: postgres_db
       DB_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
+      REDIS_HOST: redis_cont
+      TG_CHANNEL_LINK: ${TG_CHANNEL_LINK}
     volumes:
       - ./src:/app/src
-      - ./migrations:/app/migrations
-      - .alembic.ini:/app/alembic.ini
     depends_on:
       - db
     entrypoint: poetry run python3 -m src
@@ -59,13 +59,13 @@ services:
       DB_HOST: psql_server
       DB_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
-      REDIS: redis
+      REDIS_HOST: redis_cont
     depends_on:
       - redis
       - db
     volumes:
       - ./src:/app/src
-    entrypoint: celery --app=src.tasks.tasks beat
+    entrypoint: celery --app=src.tasks.tasks:celery beat
   
   poster-worker:
     build:
@@ -81,14 +81,14 @@ services:
       DB_HOST: psql_server
       DB_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
-      REDIS: redis
+      REDIS_HOST: redis_cont
     depends_on:
       - redis
       - db
       - poster-beat
     volumes:
       - ./src:/app/src
-    entrypoint: celery --app=src.tasks.tasks worker
+    entrypoint: celery --app=src.tasks.tasks:celery worker
 
   flower:
     build:
@@ -109,3 +109,18 @@ services:
     depends_on:
       - redis
       - poster-worker
+  
+  lab:
+    image: studing_lab:latest
+    container_name: lab
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: psql_server
+      DB_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "7070:7070"
+    volumes:
+      - ./lab_data:/app/data
+    entrypoint: jupyter lab --ip=0.0.0.0 --port=7070 --no-browser --allow-root

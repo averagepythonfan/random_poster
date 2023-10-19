@@ -6,3 +6,4 @@
 /src/handlers/__pycache__
 /src/tasks/__pycache__
 .env
+/lab_data
