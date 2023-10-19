@@ -1,13 +1,8 @@
-import logging
 from aiogram import F, Router
 from aiogram.types import Message
 from src.config import ADMIN
 from aiogram.filters import Command
-from .misc import post, post_stats
-
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from .misc import post, post_stats, post_on_channel
 
 
 admin = Router()
@@ -18,7 +13,6 @@ async def take_pic(message: Message):
     if message.from_user.id == int(ADMIN):
         photo_id = str(message.photo[-1].file_id)
         res = await post(ptype="pic", link=photo_id)
-        logger.info("photo added to database")
         await message.reply(f'Post_id {res}')
 
 
@@ -27,7 +21,6 @@ async def take_vid(message: Message):
     if message.from_user.id == int(ADMIN):
         vid_id = str(message.video.file_id)
         res = await post(ptype="vid", link=vid_id)
-        logger.info("video added to database")
         await message.reply(f'Post_id {res}')
 
 
@@ -44,3 +37,11 @@ async def stats_command(message: Message):
     if message.from_user.id == ADMIN:
         res = await post_stats()
         await message.reply(f"Stats: Post Count: {res}")
+
+
+@admin.message(Command(commands=['random']))
+async def stats_command(message: Message):
+    if message.from_user.id == ADMIN:
+        res = await post_on_channel()
+        if res:
+            await message.reply(f"Successfull post")
