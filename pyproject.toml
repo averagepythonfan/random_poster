@@ -23,6 +23,12 @@ flower = "^2.0.1"
 [tool.poetry.group.dev.dependencies]
 polars = "^0.19.9"
 
+
+[tool.poetry.group.poster.dependencies]
+sqlalchemy = "^2.0.22"
+psycopg2-binary = "^2.9.9"
+requests = "^2.31.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

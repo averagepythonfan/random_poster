@@ -33,82 +33,30 @@ services:
       DB_HOST: postgres_db
       DB_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
-      REDIS_HOST: redis_cont
-      TG_CHANNEL_LINK: ${TG_CHANNEL_LINK}
     volumes:
       - ./src:/app/src
     depends_on:
       - db
     entrypoint: poetry run python3 -m src
-  
-  redis:
-    image: redis:latest
-    container_name: redis_cont
 
-  poster-beat:
+  poster:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: poster_beat_cont
+      dockerfile: poster.Dockerfile
+    container_name: poster
     environment:
       TOKEN: ${TOKEN}
       ADMIN: ${ADMIN}
       CHAT_ID: ${CHAT_ID}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_HOST: psql_server
-      DB_PORT: 5432
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
-      REDIS_HOST: redis_cont
-    depends_on:
-      - redis
-      - db
+      TG_CHANNEL_LINK: ${TG_CHANNEL_LINK}
     volumes:
-      - ./src:/app/src
-    entrypoint: celery --app=src.tasks.tasks:celery beat
-  
-  poster-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: poster_worker_cont
-    environment:
-      TOKEN: ${TOKEN}
-      ADMIN: ${ADMIN}
-      CHAT_ID: ${CHAT_ID}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_HOST: psql_server
-      DB_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB}
-      REDIS_HOST: redis_cont
-    depends_on:
-      - redis
-      - db
-      - poster-beat
-    volumes:
-      - ./src:/app/src
-    entrypoint: celery --app=src.tasks.tasks:celery worker
-
-  flower:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: flower_cont
-    environment:
-      TOKEN: ${TOKEN}
-      ADMIN: ${ADMIN}
-      CHAT_ID: ${CHAT_ID}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_HOST: psql_server
-      DB_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB}
-      REDIS: redis
-    entrypoint: celery --app=src.tasks.tasks flower
-    depends_on:
-      - redis
-      - poster-worker
+      - ./poster:/app
+    entrypoint: python3 main.py
   
   lab:
     image: studing_lab:latest
