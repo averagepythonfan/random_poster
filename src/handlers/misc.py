@@ -1,8 +1,9 @@
 import aiohttp
 import logging
 from sqlalchemy import insert, select, update
+from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import count, random
-from src.db import async_session_maker, Posts
+from src.db import async_session_maker, Posts, engine_sync
 from src.config import CHAT_ID, TG_CHANNEL_LINK, TOKEN
 
 
@@ -10,10 +11,10 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-async def post(ptype: str, link: str):
-    async with async_session_maker() as session:
+def post(ptype: str, link: str):
+    with Session(engine_sync) as session:
         stmt = select(Posts.post_id).order_by(Posts.post_id.desc()).limit(1)
-        res = await session.execute(stmt)
+        res = session.execute(stmt)
         post_id = res.scalar()
 
         post_data = {
@@ -23,8 +24,8 @@ async def post(ptype: str, link: str):
         }
 
         stmt = insert(Posts).values(**post_data).returning(Posts.post_id)
-        res = await session.execute(stmt)
-        await session.commit()
+        res = session.execute(stmt)
+        session.commit()
         return res.scalar()
 
 

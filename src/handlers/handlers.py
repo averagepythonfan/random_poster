@@ -12,7 +12,7 @@ admin = Router()
 async def take_pic(message: Message):
     if message.from_user.id == int(ADMIN):
         photo_id = str(message.photo[-1].file_id)
-        res = await post(ptype="pic", link=photo_id)
+        res = post(ptype="pic", link=photo_id)
         await message.reply(f'Post_id {res}')
 
 
@@ -20,7 +20,7 @@ async def take_pic(message: Message):
 async def take_vid(message: Message):
     if message.from_user.id == int(ADMIN):
         vid_id = str(message.video.file_id)
-        res = await post(ptype="vid", link=vid_id)
+        res = post(ptype="vid", link=vid_id)
         await message.reply(f'Post_id {res}')
 
 
@@ -28,7 +28,7 @@ async def take_vid(message: Message):
 async def take_gif(message: Message):
     if message.from_user.id == int(ADMIN):
         gif_id = message.animation.file_id
-        res = await post(ptype='gif', link=gif_id)
+        res = post(ptype='gif', link=gif_id)
         await message.reply(f'Post_id {res}')
 
 

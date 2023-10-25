@@ -136,7 +136,7 @@ def make_post() -> None:
 
 while True:
     now = datetime.datetime.now()
-    if 9 <= now.hour <= 23:
+    if 9 <= (now.hour - 3) <= 23:
         logger.info("Posting time!")
         if (now.minute % 30 == 0 ):
             logger.info("Time to make a post and wait for 30 min!")
