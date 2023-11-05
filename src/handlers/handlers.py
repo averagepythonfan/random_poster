@@ -50,7 +50,7 @@ async def stats_command(message: Message):
 async def stats_command(message: Message):
     if message.from_user.id in admins:
         res = f"<b>ID:</b> {message.from_user.id},\n<b>STATUS</b>: ADMIN"
-        await message.reply(res)
+        await message.reply(res, parse_mode='HTML')
     else:
         res = f"<b>ID:</b> {message.from_user.id},\n<b>STATUS</b>: GUEST"
-        await message.reply(res)
+        await message.reply(res, parse_mode='HTML')
