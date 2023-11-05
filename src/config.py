@@ -3,6 +3,9 @@ import os
 TOKEN: str = os.getenv("TOKEN")
 CHAT_ID = -(int(os.getenv("CHAT_ID")))
 ADMIN = int(os.getenv("ADMIN"))
+ADMIN2 = int(os.getenv("ADMIN2"))
+
+admins = [ADMIN, ADMIN2]
 
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")

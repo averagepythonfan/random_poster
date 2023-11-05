@@ -4,6 +4,7 @@ from aiogram import types
 bot_commands = (
     ('stats', 'stats by posts'),
     ("random", "random post"),
+    ('status', 'user status'),
 )
 
 
