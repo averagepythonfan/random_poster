@@ -29,6 +29,7 @@ services:
     environment:
       TOKEN: ${TOKEN}
       ADMIN: ${ADMIN}
+      ADMIN2: ${ADMIN2}
       CHAT_ID: ${CHAT_ID}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
