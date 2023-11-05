@@ -46,7 +46,7 @@ async def stats_command(message: Message):
         if res:
             await message.reply(f"Successfull post")
 
-@admin.message(Command(commands=['stats']))
+@admin.message(Command(commands=['status']))
 async def stats_command(message: Message):
     if message.from_user.id in admins:
         res = f"<b>ID:</b> {message.from_user.id},\n<b>STATUS</b>: ADMIN"
