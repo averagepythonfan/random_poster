@@ -18,7 +18,7 @@ async def take_pic(message: Message):
 
 @admin.message(F.video)
 async def take_vid(message: Message):
-    if message.from_user.id in admin:
+    if message.from_user.id in admins:
         vid_id = str(message.video.file_id)
         res = post(ptype="vid", link=vid_id)
         await message.reply(f'Post_id {res}')
