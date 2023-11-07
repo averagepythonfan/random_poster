@@ -8,10 +8,12 @@ from sqlalchemy import text, URL
 from sqlalchemy.exc import SQLAlchemyError
 
 
+# init logger
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+# init environment
 ADMIN = os.getenv("ADMIN")
 CHAT_ID: int = -(int(os.getenv("CHAT_ID")))
 TG_CHANNEL_LINK: str = os.getenv("TG_CHANNEL_LINK")
@@ -23,6 +25,7 @@ class TelegramBotAPIError(BaseException):
     ...
 
 
+# init db's URL and sync engine
 db_url = URL.create(
     drivername="postgresql",
     username=os.getenv("POSTGRES_USER"),
@@ -34,10 +37,12 @@ db_url = URL.create(
 engine = create_engine(db_url)
 
 
+# functions
 def select_random_post() -> tuple:
-    """Pulls a randon post from Postgres DB
+    """Pulls a randon post from Postgres DB.
+    If there is no any posts raise Assertion Error.
     
-    Returns a Tuple[post_id, type, link]"""
+    Returns a Tuple with post data."""
 
     stmt = text("""
         SELECT
@@ -59,6 +64,9 @@ def select_random_post() -> tuple:
 
 
 def transorm_post_to_data(post: tuple) -> dict:
+    """Transorm post data tuple to dict
+    with TG Bot API data"""
+
     POST_ID, POST_TYPE, LINK = post
 
     post_data = {
@@ -83,6 +91,10 @@ def post_to_channel(link: str,
                     cont_type: str, 
                     post_id: int,
                     method: str) -> bool:
+    """Make a post with TG Bot API
+    
+    Return True, otherwise raise an Exception"""
+
     params = {
         "chat_id": CHAT_ID,
         f"{cont_type}": link,
@@ -98,6 +110,8 @@ def post_to_channel(link: str,
 
 
 def update_db(post_id: int) -> bool:
+    """Update successfull post in data base"""
+
     with engine.connect() as con:
         con.execute(text(f"""
             UPDATE post
@@ -109,6 +123,9 @@ def update_db(post_id: int) -> bool:
 
 
 def notificate_admin(text: str) -> None:
+    """Notificate an Admin with special information
+    through TG Bot API, returns None"""
+
     params = {
         "chat_id": ADMIN,
         "text": text,
@@ -121,7 +138,10 @@ def notificate_admin(text: str) -> None:
 
 
 def make_post() -> None:
-    post = select_random_post()
+    try:
+        post = select_random_post()
+    except AssertionError:
+        notificate_admin("There is no any posts")
     data = transorm_post_to_data(post)
     try:
         if post_to_channel(**data):
@@ -131,9 +151,10 @@ def make_post() -> None:
     except TelegramBotAPIError as e:
         notificate_admin(text=str(e))
     except SQLAlchemyError as sql_e:
-        notificate_admin(text=str(e))
+        notificate_admin(text=str(sql_e))
 
 
+# main endless loop
 while True:
     now = datetime.datetime.now()
     if 6 <= now.hour <= 20:
