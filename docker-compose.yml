@@ -30,6 +30,7 @@ services:
       TOKEN: ${TOKEN}
       ADMIN: ${ADMIN}
       ADMIN2: ${ADMIN2}
+      ADMIN3: ${ADMIN3}
       CHAT_ID: ${CHAT_ID}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
